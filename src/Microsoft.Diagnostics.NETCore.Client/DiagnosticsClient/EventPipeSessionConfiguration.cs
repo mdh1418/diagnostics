@@ -9,13 +9,13 @@ using System.Linq;
 
 namespace Microsoft.Diagnostics.NETCore.Client
 {
-    internal enum EventPipeSerializationFormat
+    public enum EventPipeSerializationFormat
     {
         NetPerf,
         NetTrace
     }
 
-    internal class EventPipeSessionConfiguration
+    public class EventPipeSessionConfiguration
     {
         public EventPipeSessionConfiguration(int circularBufferSizeMB, EventPipeSerializationFormat format, IEnumerable<EventPipeProvider> providers, bool requestRundown=true)
         {

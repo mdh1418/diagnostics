@@ -30,10 +30,16 @@ namespace Microsoft.Diagnostics.NETCore.Client
         {
         }
 
+        public DiagnosticsClient(string diagnosticPort) :
+            this(new DiagnosticPortIpcEndpoint(diagnosticPort))
+        {
+        }
+
         internal DiagnosticsClient(IpcEndpoint endpoint)
         {
             _endpoint = endpoint;
         }
+
 
         /// <summary>
         /// Wait for an available diagnostic endpoint to the runtime instance.
@@ -64,7 +70,7 @@ namespace Microsoft.Diagnostics.NETCore.Client
         /// <param name="circularBufferMB">The size of the runtime's buffer for collecting events in MB</param>
         /// <returns>
         /// An EventPipeSession object representing the EventPipe session that just started.
-        /// </returns> 
+        /// </returns>
         public EventPipeSession StartEventPipeSession(IEnumerable<EventPipeProvider> providers, bool requestRundown = true, int circularBufferMB = 256)
         {
             return EventPipeSession.Start(_endpoint, providers, requestRundown, circularBufferMB);
@@ -78,7 +84,7 @@ namespace Microsoft.Diagnostics.NETCore.Client
         /// <param name="circularBufferMB">The size of the runtime's buffer for collecting events in MB</param>
         /// <returns>
         /// An EventPipeSession object representing the EventPipe session that just started.
-        /// </returns> 
+        /// </returns>
         public EventPipeSession StartEventPipeSession(EventPipeProvider provider, bool requestRundown = true, int circularBufferMB = 256)
         {
             return EventPipeSession.Start(_endpoint, new[] { provider }, requestRundown, circularBufferMB);
@@ -93,7 +99,7 @@ namespace Microsoft.Diagnostics.NETCore.Client
         /// <param name="token">The token to monitor for cancellation requests.</param>
         /// <returns>
         /// An EventPipeSession object representing the EventPipe session that just started.
-        /// </returns> 
+        /// </returns>
         internal Task<EventPipeSession> StartEventPipeSessionAsync(IEnumerable<EventPipeProvider> providers, bool requestRundown, int circularBufferMB, CancellationToken token)
         {
             return EventPipeSession.StartAsync(_endpoint, providers, requestRundown, circularBufferMB, token);
@@ -116,7 +122,7 @@ namespace Microsoft.Diagnostics.NETCore.Client
 
         /// <summary>
         /// Trigger a core dump generation.
-        /// </summary> 
+        /// </summary>
         /// <param name="dumpType">Type of the dump to be generated</param>
         /// <param name="dumpPath">Full path to the dump to be generated. By default it is /tmp/coredump.{pid}</param>
         /// <param name="logDumpGeneration">When set to true, display the dump generation debug log to the console.</param>
@@ -129,7 +135,7 @@ namespace Microsoft.Diagnostics.NETCore.Client
 
         /// <summary>
         /// Trigger a core dump generation.
-        /// </summary> 
+        /// </summary>
         /// <param name="dumpType">Type of the dump to be generated</param>
         /// <param name="dumpPath">Full path to the dump to be generated. By default it is /tmp/coredump.{pid}</param>
         /// <param name="flags">logging and crash report flags. On runtimes less than 6.0, only LoggingEnabled is supported.</param>
@@ -149,7 +155,7 @@ namespace Microsoft.Diagnostics.NETCore.Client
 
         /// <summary>
         /// Trigger a core dump generation.
-        /// </summary> 
+        /// </summary>
         /// <param name="dumpType">Type of the dump to be generated</param>
         /// <param name="dumpPath">Full path to the dump to be generated. By default it is /tmp/coredump.{pid}</param>
         /// <param name="logDumpGeneration">When set to true, display the dump generation debug log to the console.</param>
@@ -163,7 +169,7 @@ namespace Microsoft.Diagnostics.NETCore.Client
 
         /// <summary>
         /// Trigger a core dump generation.
-        /// </summary> 
+        /// </summary>
         /// <param name="dumpType">Type of the dump to be generated</param>
         /// <param name="dumpPath">Full path to the dump to be generated. By default it is /tmp/coredump.{pid}</param>
         /// <param name="flags">logging and crash report flags. On runtimes less than 6.0, only LoggingEnabled is supported.</param>
@@ -196,7 +202,7 @@ namespace Microsoft.Diagnostics.NETCore.Client
             ValidateResponseMessage(response, nameof(AttachProfiler));
 
             // The call to set up the pipe and send the message operates on a different timeout than attachTimeout, which is for the runtime.
-            // We should eventually have a configurable timeout for the message passing, potentially either separately from the 
+            // We should eventually have a configurable timeout for the message passing, potentially either separately from the
             // runtime timeout or respect attachTimeout as one total duration.
         }
 

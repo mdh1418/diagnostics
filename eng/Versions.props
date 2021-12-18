@@ -18,7 +18,7 @@
     <!-- Latest symstore version updated by darc -->
     <MicrosoftSymbolStoreVersion>1.0.260601</MicrosoftSymbolStoreVersion>
     <!-- Runtime versions to test -->
-    <MicrosoftNETCoreApp31Version>3.1.18</MicrosoftNETCoreApp31Version>
+    <MicrosoftNETCoreApp31Version>6.0.0</MicrosoftNETCoreApp31Version>
     <MicrosoftAspNetCoreApp31Version>$(MicrosoftNETCoreApp31Version)</MicrosoftAspNetCoreApp31Version>
     <MicrosoftNETCoreApp50Version>5.0.9</MicrosoftNETCoreApp50Version>
     <MicrosoftAspNetCoreApp50Version>$(MicrosoftNETCoreApp50Version)</MicrosoftAspNetCoreApp50Version>

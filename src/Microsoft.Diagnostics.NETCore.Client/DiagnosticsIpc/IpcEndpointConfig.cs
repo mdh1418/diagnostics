@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 
 namespace Microsoft.Diagnostics.NETCore.Client
 {
-    internal class IpcEndpointConfig
+    public class IpcEndpointConfig
     {
         public enum PortType
         {
@@ -18,7 +18,8 @@ namespace Microsoft.Diagnostics.NETCore.Client
         public enum TransportType
         {
             NamedPipe,
-            UnixDomainSocket
+            UnixDomainSocket,
+            TcpClient
         }
 
         PortType _portType;
@@ -55,6 +56,12 @@ namespace Microsoft.Diagnostics.NETCore.Client
                 {
                     if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                         throw new PlatformNotSupportedException($"{UnixDomainSocketSchema} is not supported on Windows, use {NamedPipeSchema}.");
+                    break;
+                }
+                case TransportType.TcpClient:
+                {
+                    if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                        throw new PlatformNotSupportedException($"TcpClient  is not supported on Windows, use {NamedPipeSchema}.");
                     break;
                 }
                 default:
@@ -108,13 +115,13 @@ namespace Microsoft.Diagnostics.NETCore.Client
 
             string address = "";
             PortType portType = PortType.Connect;
-            TransportType transportType = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? TransportType.NamedPipe : TransportType.UnixDomainSocket;
+            TransportType transportType = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? TransportType.NamedPipe : TransportType.TcpClient;
 
             if (!string.IsNullOrEmpty(config))
             {
                 var parts = config.Split(',');
                 if (parts.Length > 2)
-                    throw new FormatException($"Unknow IPC endpoint config format, {config}.");
+                    throw new FormatException($"Unknown IPC endpoint config format, {config}.");
 
                 if (string.IsNullOrEmpty(parts[0]))
                     throw new FormatException($"Missing IPC endpoint config address, {config}.");
@@ -134,13 +141,14 @@ namespace Microsoft.Diagnostics.NETCore.Client
                     }
                     else
                     {
-                        throw new FormatException($"Unknow IPC endpoint config keyword, {parts[1]} in {config}.");
+                        throw new FormatException($"Unknown IPC endpoint config keyword, {parts[1]} in {config}.");
                     }
                 }
             }
 
             if (Uri.TryCreate(address, UriKind.Absolute, out Uri parsedAddress))
             {
+
                 if (string.Equals(parsedAddress.Scheme, NamedPipeSchema, StringComparison.OrdinalIgnoreCase))
                 {
                     transportType = TransportType.NamedPipe;
@@ -151,6 +159,11 @@ namespace Microsoft.Diagnostics.NETCore.Client
                     transportType = TransportType.UnixDomainSocket;
                     address = parsedAddress.AbsolutePath;
                 }
+                // else if (string.Equals(parsedAddress.Scheme, TcpClientSchema, StringComparison.OrdinalIgnoreCase))
+                // {
+                //     transportType = TransportType.TcpClient;
+                //     address = parsedAddress.AbsolutePath;
+                // }
                 else if (string.Equals(parsedAddress.Scheme, Uri.UriSchemeFile, StringComparison.OrdinalIgnoreCase))
                 {
                     address = parsedAddress.AbsolutePath;

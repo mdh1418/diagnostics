@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.IO;
 using System.IO.Pipes;
 using System.Linq;
+using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
 using System.Threading;
@@ -69,6 +70,14 @@ namespace Microsoft.Diagnostics.NETCore.Client
                 socket.Connect(new IpcUnixDomainSocketEndPoint(config.Address), timeout);
                 return new ExposedSocketNetworkStream(socket, ownsSocket: true);
             }
+            else if (config.Transport == IpcEndpointConfig.TransportType.TcpClient)
+            {
+                var addressPort = config.Address.Split(':');
+
+                TcpClient tcpClient = new TcpClient (addressPort[0], int.Parse(addressPort[1]));
+                // tcpClient.Connect(addressPort[0], int.Parse(addressPort[1]));
+                return tcpClient.GetStream();
+            }
             else
             {
                 throw new ArgumentException($"Unsupported IpcEndpointConfig transport type {config.Transport}");
@@ -91,7 +100,7 @@ namespace Microsoft.Diagnostics.NETCore.Client
                 // is waited using WaitNamedPipe with an infinite timeout, then the
                 // CancellationToken cannot be observed.
                 await namedPipe.ConnectAsync(int.MaxValue, token).ConfigureAwait(false);
-                
+
                 return namedPipe;
             }
             else if (config.Transport == IpcEndpointConfig.TransportType.UnixDomainSocket)
