@@ -9,15 +9,16 @@ namespace Microsoft.Diagnostics.NETCore.Client
         EventPipe = 0x02,
         Profiler = 0x03,
         Process = 0x04,
+        UserEvent = 0x05,
 
         Server = 0xFF,
     }
 
-    internal enum DiagnosticsServerResponseId : byte
+    internal enum DumpCommandId : byte
     {
-        OK = 0x00,
-        // future
-        Error = 0xFF,
+        GenerateCoreDump = 0x01,
+        GenerateCoreDump2 = 0x02,
+        GenerateCoreDump3 = 0x03,
     }
 
     internal enum EventPipeCommandId : byte
@@ -27,13 +28,6 @@ namespace Microsoft.Diagnostics.NETCore.Client
         CollectTracing2 = 0x03,
         CollectTracing3 = 0x04,
         CollectTracing4 = 0x05,
-    }
-
-    internal enum DumpCommandId : byte
-    {
-        GenerateCoreDump = 0x01,
-        GenerateCoreDump2 = 0x02,
-        GenerateCoreDump3 = 0x03,
     }
 
     internal enum ProfilerCommandId : byte
@@ -53,5 +47,17 @@ namespace Microsoft.Diagnostics.NETCore.Client
         DisablePerfMap = 0x06,
         ApplyStartupHook = 0x07,
         GetProcessInfo3 = 0x08
+    }
+
+    internal enum UserEventCommandId : byte
+    {
+        EnableProvider = 0x01,
+    }
+
+    internal enum DiagnosticsServerResponseId : byte
+    {
+        OK = 0x00,
+        // future
+        Error = 0xFF,
     }
 }

@@ -18,7 +18,7 @@ namespace Microsoft.Diagnostics.NETCore.Client
     /// <summary>
     /// This is a top-level class that contains methods to send various diagnostics command to the runtime.
     /// </summary>
-    public sealed class DiagnosticsClient
+    public sealed partial class DiagnosticsClient
     {
         private const int DefaultCircularBufferMB = 256;
 
