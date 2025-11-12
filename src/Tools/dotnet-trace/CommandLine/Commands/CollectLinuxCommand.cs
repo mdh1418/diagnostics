@@ -78,6 +78,12 @@ namespace Microsoft.Diagnostics.Tools.Trace
             Console.WriteLine("https://learn.microsoft.com/dotnet/core/diagnostics/dotnet-trace.");
             Console.WriteLine("==========================================================================================");
 
+            // Temporary until record-trace can overwrite the output trace.
+            if (!string.Equals(args.Output.Name, CommonOptions.DefaultTraceName, StringComparison.OrdinalIgnoreCase) && args.Output.Exists)
+            {
+                args.Output.Delete();
+            }
+
             int ret = (int)ReturnCode.TracingError;
             string scriptPath = null;
             try
