@@ -1,129 +1,52 @@
-using System;
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+
 using System.CommandLine;
-using System.CommandLine.Parsing;
 
-namespace Common
+namespace EventPipeStress
 {
-    public static class CommandLineOptions
+    public static class CommonOptions
     {
-        static public ValidateSymbol<OptionResult> GreaterThanZeroValidator = (OptionResult result) =>
-        {
-            if (result.GetValueOrDefault<int>() <= 0)
-                return $"{result.Option.Name} must be greater than or equal to 0";
-            return null;
-        };
-
-        static public ValidateSymbol<OptionResult> GreaterThanOrEqualZeroValidator = (OptionResult result) =>
-        {
-            if (result.GetValueOrDefault<int>() < 0)
-                return $"{result.Option.Name} must be greater than 0";
-            return null;
-        };
-
-        static public ValidateSymbol<OptionResult> MustBeNegOneOrPositiveValidator = (OptionResult result) =>
-        {
-            int val = result.GetValueOrDefault<int>();
-            if (val < -1 || val == 0)
-                return $"{result.Option.Name} must be -1 or greater than 0";
-            return null;
-        };
-
-        static private Option<int> _eventSizeOption = null;
-        static public Option<int> EventSizeOption 
-        {
-            get
+        public static readonly Option<int> EventSizeOption =
+            new("--event-size")
             {
-                if (_eventSizeOption != null)
-                    return _eventSizeOption;
+                Description = "The size of the event payload. The payload is a string, so the actual size will be eventSize * sizeof(char) where sizeof(char) is 2 Bytes due to Unicode in C#.",
+                DefaultValueFactory = _ => 100,
+            };
 
-                _eventSizeOption = new Option<int>(
-                                        alias: "--event-size",
-                                        getDefaultValue: () => 100,
-                                        description: "The size of the event payload.  The payload is a string, so the actual size will be eventSize * sizeof(char) where sizeof(char) is 2 Bytes due to Unicode in C#.");
-                _eventSizeOption.AddValidator(GreaterThanZeroValidator);
-                return _eventSizeOption;
-            }
-            private set {}
-        }
-
-        static private Option<int> _eventRateOption = null;
-        static public Option<int> EventRateOption
-        {
-            get
+        public static readonly Option<int> EventRateOption =
+            new("--event-rate")
             {
-                if (_eventRateOption != null)
-                    return _eventRateOption;
+                Description = "The rate of events in events/sec. -1 means 'as fast as possible'.",
+                DefaultValueFactory = _ => -1,
+            };
 
-                _eventRateOption = new Option<int>(
-                                        alias: "--event-rate",
-                                        getDefaultValue: () => -1,
-                                        description: "The rate of events in events/sec.  -1 means 'as fast as possible'.");
-                _eventRateOption.AddValidator(MustBeNegOneOrPositiveValidator);
-                return _eventRateOption;
-            }
-            private set {}
-        }
-
-        static public Option<BurstPattern> BurstPatternOption =
-            new Option<BurstPattern>(
-                alias: "--burst-pattern",
-                getDefaultValue: () => BurstPattern.NONE,
-                description: "The burst pattern to send events in.");
-
-        static private Option<int> _durationOption = null;
-        static public Option<int> DurationOption
-        {
-            get
+        public static readonly Option<BurstPattern> BurstPatternOption =
+            new("--burst-pattern")
             {
-                if (_durationOption != null)
-                    return _durationOption;
+                Description = "The burst pattern to send events in.",
+                DefaultValueFactory = _ => BurstPattern.NONE,
+            };
 
-                _durationOption = new Option<int>(
-                                        alias: "--duration",
-                                        getDefaultValue: () => 60,
-                                        description: "The number of seconds to send events for.");
-                _durationOption.AddValidator(GreaterThanZeroValidator);
-                return _durationOption;
-            }
-            private set {}
-        }
-
-
-        static private Option<int> _threadsOption = null;
-        static public Option<int> ThreadsOption
-        {
-            get
+        public static readonly Option<int> DurationOption =
+            new("--duration")
             {
-                if (_threadsOption != null)
-                    return _threadsOption;
+                Description = "The number of seconds to send events for.",
+                DefaultValueFactory = _ => 60,
+            };
 
-                _threadsOption = new Option<int>(
-                                        alias: "--threads",
-                                        getDefaultValue: () => 1,
-                                        description: "The number of threads writing events.");
-                _threadsOption.AddValidator(GreaterThanZeroValidator);
-                return _threadsOption;
-            }
-            private set {}
-        }
-
-
-        static private Option<int> _eventCountOption = null;
-        static public Option<int> EventCountOption
-        {
-            get
+        public static readonly Option<int> ThreadsOption =
+            new("--threads")
             {
-                if (_eventCountOption != null)
-                    return _eventCountOption;
+                Description = "The number of threads writing events.",
+                DefaultValueFactory = _ => 1,
+            };
 
-                _eventCountOption = new Option<int>(
-                                            alias: "--event-count",
-                                            getDefaultValue: () => -1,
-                                            description: "The total number of events to write per thread.  -1 means no limit");
-                _eventCountOption.AddValidator(MustBeNegOneOrPositiveValidator);
-                return _eventCountOption;
-            }
-            private set {}
-        }
+        public static readonly Option<int> EventCountOption =
+            new("--event-count")
+            {
+                Description = "The total number of events to write per thread. -1 means no limit.",
+                DefaultValueFactory = _ => -1,
+            };
     }
 }
